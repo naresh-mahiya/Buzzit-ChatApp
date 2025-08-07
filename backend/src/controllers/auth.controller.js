@@ -4,38 +4,52 @@ import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, mobile, password } = req.body;
   try {
-    if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    // Validate all fields
+    if (!fullName || !email || !mobile || !password) {
+      return res.status(400).json({ message: "All fields (name, email, mobile, password) are required" });
     }
-
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    // Email validation (stricter)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Please enter a valid email address" });
     }
-
-    const user = await User.findOne({ email });
-
-    if (user) return res.status(400).json({ message: "Email already exists" });
-
+    // Mobile validation (exactly 10 digits)
+    const mobileRegex = /^\d{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      return res.status(400).json({ message: "Mobile number must be exactly 10 digits" });
+    }
+    // Password validation (at least 8 chars)
+    if (password.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
+    // Check for existing user by email or mobile
+    const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      if (existingUser.mobile === mobile) {
+        return res.status(400).json({ message: "Mobile number already exists" });
+      }
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     const newUser = new User({
       fullName,
       email,
+      mobile,
       password: hashedPassword,
     });
-
     if (newUser) {
-      // generate jwt token here
       generateToken(newUser._id, res);
       await newUser.save();
-
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
+        mobile: newUser.mobile,
         profilePic: newUser.profilePic,
       });
     } else {
@@ -43,30 +57,45 @@ export const signup = async (req, res) => {
     }
   } catch (error) {
     console.log("Error in signup controller", error.message);
+    // Handle duplicate key error from MongoDB
+    if (error.code === 11000) {
+      if (error.keyPattern?.email) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      if (error.keyPattern?.mobile) {
+        return res.status(400).json({ message: "Mobile number already exists" });
+      }
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { emailOrMobile, password } = req.body;
   try {
-    const user = await User.findOne({ email });
-
+    if (!emailOrMobile || !password) {
+      return res.status(400).json({ message: "Both email/mobile and password are required" });
+    }
+    // Find user by email or mobile
+    const user = await User.findOne({
+      $or: [
+        { email: emailOrMobile },
+        { mobile: emailOrMobile }
+      ]
+    });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
     generateToken(user._id, res);
-
     res.status(200).json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
+      mobile: user.mobile,
       profilePic: user.profilePic,
     });
   } catch (error) {
