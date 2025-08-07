@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 import Sidebar from "../components/Sidebar";
@@ -6,6 +9,20 @@ import ChatContainer from "../components/ChatContainer";
 
 const HomePage = () => {
   const { selectedUser } = useChatStore();
+  const { authUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  // Redirect admin users to admin dashboard
+  useEffect(() => {
+    if (authUser && authUser.role === 'admin') {
+      navigate('/admin');
+    }
+  }, [authUser, navigate]);
+
+  // Don't render chat interface for admin users
+  if (authUser && authUser.role === 'admin') {
+    return null;
+  }
 
   return (
     <div className="h-screen bg-base-200">

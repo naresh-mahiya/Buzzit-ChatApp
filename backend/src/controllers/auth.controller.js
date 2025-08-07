@@ -41,6 +41,7 @@ export const signup = async (req, res) => {
       email,
       mobile,
       password: hashedPassword,
+      role: 'user', // Default role for signup
     });
     if (newUser) {
       generateToken(newUser._id, res);
@@ -51,6 +52,7 @@ export const signup = async (req, res) => {
         email: newUser.email,
         mobile: newUser.mobile,
         profilePic: newUser.profilePic,
+        role: newUser.role,
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -71,11 +73,12 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { emailOrMobile, password } = req.body;
+  const { emailOrMobile, password, role } = req.body;
   try {
     if (!emailOrMobile || !password) {
       return res.status(400).json({ message: "Both email/mobile and password are required" });
     }
+    
     // Find user by email or mobile
     const user = await User.findOne({
       $or: [
@@ -83,13 +86,21 @@ export const login = async (req, res) => {
         { mobile: emailOrMobile }
       ]
     });
+    
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    
+    // Check if role matches (if role is specified)
+    if (role && user.role !== role) {
+      return res.status(400).json({ message: `Invalid credentials for ${role} login` });
+    }
+    
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    
     generateToken(user._id, res);
     res.status(200).json({
       _id: user._id,
@@ -97,6 +108,7 @@ export const login = async (req, res) => {
       email: user.email,
       mobile: user.mobile,
       profilePic: user.profilePic,
+      role: user.role,
     });
   } catch (error) {
     console.log("Error in login controller", error.message);

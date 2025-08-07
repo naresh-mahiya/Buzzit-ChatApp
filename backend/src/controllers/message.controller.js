@@ -7,7 +7,13 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+    const loggedInUser = await User.findById(loggedInUserId);
+    
+    // Filter out the logged-in user and admin users
+    const filteredUsers = await User.find({ 
+      _id: { $ne: loggedInUserId },
+      role: { $ne: 'admin' } // Exclude admin users from contact list
+    }).select("-password");
 
     res.status(200).json(filteredUsers);
   } catch (error) {

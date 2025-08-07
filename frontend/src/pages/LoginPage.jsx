@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, Users, Shield } from "lucide-react";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginRole, setLoginRole] = useState('user'); // 'user' or 'admin'
   const [formData, setFormData] = useState({
     emailOrMobile: "",
     password: "",
@@ -14,7 +15,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    login({ ...formData, role: loginRole });
   };
 
   return (
@@ -33,6 +34,26 @@ const LoginPage = () => {
               </div>
               <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
               <p className="text-base-content/60">Sign in to your account</p>
+            </div>
+          </div>
+
+          {/* Role Toggle */}
+          <div className="flex justify-center">
+            <div className="join">
+              <button
+                className={`join-item btn btn-sm ${loginRole === 'user' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setLoginRole('user')}
+              >
+                <Users className="w-4 h-4 mr-2" />
+                User
+              </button>
+              <button
+                className={`join-item btn btn-sm ${loginRole === 'admin' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setLoginRole('admin')}
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Admin
+              </button>
             </div>
           </div>
 
@@ -92,7 +113,7 @@ const LoginPage = () => {
                   Loading...
                 </>
               ) : (
-                "Sign in"
+                `Sign in as ${loginRole}`
               )}
             </button>
           </form>

@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
@@ -17,12 +18,10 @@ const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
 
-
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  
   if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen">
@@ -35,10 +34,46 @@ const App = () => {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route 
+          path="/" 
+          element={
+            authUser ? (
+              authUser.role === 'admin' ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <HomePage />
+              )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } 
+        />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route 
+          path="/profile" 
+          element={
+            authUser ? (
+              authUser.role === 'admin' ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <ProfilePage />
+              )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            authUser && authUser.role === 'admin' ? (
+              <AdminDashboard />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
       </Routes>
 
       <Toaster />
