@@ -72,12 +72,32 @@ const ChatContainer = () => {
               </time>
             </div>
             <div className="chat-bubble flex flex-col">
+              {/* Image */}
               {message.image && (
                 <img
                   src={message.image}
                   alt="Attachment"
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
+              )}
+              {/* Video */}
+              {message.videoUrl && (
+                <video controls className="sm:max-w-[220px] rounded-md mb-2">
+                  <source src={message.videoUrl} type={message.fileType || "video/mp4"} />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+              {/* Document or other file */}
+              {message.fileUrl && !message.fileType?.startsWith("image/") && !message.fileType?.startsWith("video/") && (
+                <a
+                  href={message.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline mb-2"
+                  download={message.fileName}
+                >
+                  📎 {message.fileName || "Download file"}
+                </a>
               )}
               {message.text && <p>{message.text}</p>}
             </div>

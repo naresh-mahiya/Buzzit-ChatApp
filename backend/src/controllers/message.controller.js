@@ -37,22 +37,41 @@ export const getMessages = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
-    let imageUrl;
-    if (image) {
-      // Upload base64 image to cloudinary
-      const uploadResponse = await cloudinary.uploader.upload(image);
-      imageUrl = uploadResponse.secure_url;
+    // Handle file upload if present
+    let fileData = {};
+    if (req.file) {
+      try {
+        // Convert buffer to data URL for Cloudinary
+        const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+        
+        const uploadResponse = await cloudinary.uploader.upload(dataUrl, {
+          resource_type: req.file.mimetype.startsWith("video") ? "video" : "auto",
+          public_id: `${Date.now()}-${req.file.originalname}`,
+          folder: 'chat-app',
+        });
+        
+        fileData = {
+          fileUrl: uploadResponse.secure_url,
+          fileType: req.file.mimetype,
+          fileName: req.file.originalname,
+          ...(req.file.mimetype.startsWith("image/") && { image: uploadResponse.secure_url }),
+          ...(req.file.mimetype.startsWith("video/") && { videoUrl: uploadResponse.secure_url }),
+        };
+      } catch (uploadError) {
+        console.error('Error uploading to Cloudinary:', uploadError);
+        return res.status(500).json({ error: 'Failed to upload file to Cloudinary' });
+      }
     }
 
     const newMessage = new Message({
       senderId,
       receiverId,
-      text,
-      image: imageUrl,
+      text: text || "",
+      ...fileData,
     });
 
     await newMessage.save();
