@@ -20,8 +20,8 @@ const createAdmin = async () => {
     const hashedPassword = await bcrypt.hash('admin123', salt);
     
     const adminUser = new User({
-      fullName: 'Admin ChatApp',
-      email: 'admin@chatapp.com',
+      fullName: 'Admin Buzzit',
+      email: 'admin@buzzit.com',
       mobile: '1234567890',
       password: hashedPassword,
       role: 'admin',
@@ -30,7 +30,7 @@ const createAdmin = async () => {
     await adminUser.save();
     console.log('Admin user created successfully:', adminUser.email);
     console.log('Admin credentials:');
-    console.log('Email: admin@chatapp.com');
+    console.log('Email: admin@buzzit.com');
     console.log('Password: admin123');
     process.exit(0);
   } catch (error) {

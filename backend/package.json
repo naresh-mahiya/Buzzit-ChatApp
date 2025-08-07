@@ -1,14 +1,14 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for Buzzit - Full Stack Realtime Chat App",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "create-admin": "node src/seeds/admin.seed.js"
   },
-  "keywords": [],
+  "keywords": ["chat", "real-time", "mern", "socket.io"],
   "author": "",
   "type": "module",
   "license": "ISC",

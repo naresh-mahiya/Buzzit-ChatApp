@@ -2,24 +2,14 @@ import { MessageSquare } from "lucide-react";
 
 const NoChatSelected = () => {
   return (
-    <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
-      <div className="max-w-md text-center space-y-6">
-        {/* Icon Display */}
-        <div className="flex justify-center gap-4 mb-4">
-          <div className="relative">
-            <div
-              className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center
-             justify-center animate-bounce"
-            >
-              <MessageSquare className="w-8 h-8 text-primary " />
-            </div>
-          </div>
+    <div className="flex-1 flex flex-col items-center justify-center gap-2 text-zinc-500">
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-24 h-24 rounded-full bg-base-300 flex items-center justify-center">
+          <MessageSquare className="w-12 h-12 text-zinc-400" />
         </div>
-
-        {/* Welcome Text */}
-        <h2 className="text-2xl font-bold">Welcome to Chatty!</h2>
-        <p className="text-base-content/60">
-          Select a conversation from the sidebar to start chatting
+        <h2 className="text-2xl font-bold">Welcome to Buzzit!</h2>
+        <p className="text-center max-w-sm">
+          Select a chat to start messaging with your friends and family.
         </p>
       </div>
     </div>

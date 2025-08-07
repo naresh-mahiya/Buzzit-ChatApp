@@ -1,13 +1,13 @@
 {
-  "name": "chat-app",
+  "name": "buzzit-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full Stack Realtime Chat App - Buzzit",
   "main": "index.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "npm run start --prefix backend"
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
   },
-  "keywords": [],
+  "keywords": ["chat", "real-time", "mern", "socket.io"],
   "author": "",
   "license": "ISC"
 }
