@@ -1,11 +1,21 @@
 import { useChatStore } from "../store/useChatStore";
 import { useEffect, useRef } from "react";
-
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+
+// Helper function to get initials from name
+const getInitials = (name) => {
+  if (!name) return 'U';
+  return name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
+};
 
 const ChatContainer = () => {
   const {
@@ -44,26 +54,21 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex-1 flex flex-col overflow-auto bg-[#71bff0]">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#71bff0]">
         {messages.map((message) => (
           <div
             key={message._id}
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
+            <div className="chat-image avatar">
+              <div className="size-10 rounded-full border bg-white flex items-center justify-center text-gray-800 font-bold">
+                {message.senderId === authUser._id
+                  ? getInitials(authUser.fullName)
+                  : getInitials(selectedUser.fullName)}
               </div>
             </div>
             <div className="chat-header mb-1">
@@ -71,7 +76,7 @@ const ChatContainer = () => {
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col">
+            <div className="chat-bubble flex flex-col bg-[#aed9f5] text-gray-800">
               {/* Image */}
               {message.image && (
                 <img
