@@ -3,6 +3,8 @@
 Modern, fast, and role‑aware messaging app built with the MERN stack and Socket.io. Includes a complete Admin Dashboard for user management, secure JWT auth, file sharing, online presence, and a clean, responsive UI.
 
 ![Buzzit Screenshot](frontend/public/login.png)
+![Buzzit Screenshot](frontend/public/chat.png)
+
 
 ---
 

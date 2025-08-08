@@ -22,7 +22,7 @@ const createAdmin = async () => {
     const adminUser = new User({
       fullName: 'Admin Buzzit',
       email: 'admin@buzzit.com',
-      mobile: '1234567890',
+      mobile: '7877051528',
       password: hashedPassword,
       role: 'admin',
     });
