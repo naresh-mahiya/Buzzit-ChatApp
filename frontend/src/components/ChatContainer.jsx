@@ -54,10 +54,10 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto bg-[#71bff0]">
+    <div className="flex-1 flex flex-col overflow-auto bg-[#aed9f5]">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#71bff0]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#aed9f5]">
         {messages.map((message) => (
           <div
             key={message._id}
@@ -65,10 +65,12 @@ const ChatContainer = () => {
             ref={messageEndRef}
           >
             <div className="chat-image avatar">
-              <div className="size-10 rounded-full border bg-white flex items-center justify-center text-gray-800 font-bold">
-                {message.senderId === authUser._id
-                  ? getInitials(authUser.fullName)
-                  : getInitials(selectedUser.fullName)}
+              <div className="size-10 rounded-full border bg-gray-800 flex items-center justify-center text-white font-bold p-0 m-0 w-10 h-10">
+                <span className="flex items-center justify-center w-full h-full">
+                  {message.senderId === authUser._id
+                    ? getInitials(authUser.fullName)
+                    : getInitials(selectedUser.fullName)}
+                </span>
               </div>
             </div>
             <div className="chat-header mb-1">
@@ -76,7 +78,7 @@ const ChatContainer = () => {
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col bg-[#aed9f5] text-gray-800">
+            <div className="chat-bubble flex flex-col bg-[#71bff0] text-gray-800">
               {/* Image */}
               {message.image && (
                 <img

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { LogOut, MessageSquare, User, Shield } from "lucide-react";
+import { LogOut, User, Shield } from "lucide-react";
 
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
@@ -12,12 +12,15 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 h-16">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
-              <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </div>
-              <h1 className="text-lg font-bold">Buzzit</h1>
+          <div className="flex items-center px-20 gap-8">
+            <Link
+              to="/"
+              className="flex items-center gap-2.5 hover:opacity-80 transition-all"
+            >
+              <h1 className="text-3xl font-extrabold">
+                <span className="text-yellow-500 text-4xl">Buzz</span>
+                <span className="text-blue-600 text-2xl">it</span>
+              </h1>
             </Link>
           </div>
 
@@ -30,7 +33,7 @@ const Navbar = () => {
                     <span className="hidden sm:inline">Admin</span>
                   </Link>
                 )}
-                
+
                 {/* Only show profile link for regular users */}
                 {authUser.role !== 'admin' && (
                   <Link to={"/profile"} className={`btn btn-sm gap-2`}>
